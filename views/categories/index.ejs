@@ -1,0 +1,162 @@
+<h2>Category Management</h2>
+
+<div class="filter-bar">
+    
+    <label for="typeFilter">Filter by Type:</label>
+    <div class="filter-group">
+        <select id="typeFilter"  onchange="window.location.href='/categories/view?type=' + this.value">
+            <option value="">
+                -- All Types --
+            </option>    
+            
+            <% types.forEach(type => { %>
+                <option value="<%= type %>" <%= currentFilter === type ? 'selected' : '' %>>
+                    <%= type.charAt(0).toUpperCase() + type.slice(1) %>
+                </option>
+            <% }); %>
+        </select>
+    </div>
+    
+    <button id="createBtn" class="btn btn-primary" onclick="showForm()">Create Category</button>
+</div>
+
+<div id="categoryFormContainer" class="form-container" style="display: none;">
+    <h3>
+        <span id="formTitle">Create New Category</span>
+    </h3>
+    
+    <form id="categoryForm">
+        <input type="hidden" id="categoryId" name="id">
+        
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="type">Type:</label>
+            <select id="type" name="type" required>
+                <% types.forEach(type => { %>
+                    <option value="<%= type %>">
+                        <%= type.charAt(0).toUpperCase() + type.slice(1) %>
+                    </option>
+                <% }); %>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="saveBtn">Save</button>
+        <button type="button" class="btn" onclick="hideForm()">Cancel</button>
+    </form>
+</div>
+
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% if (categories && categories.length > 0) { %>
+            <% categories.forEach(category => { %>
+                <tr id="category-row-<%= category.id %>">
+                    <td><%= category.id %></td>
+                    <td><%= category.name %></td>
+                    <td><%= category.type %></td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editCategory(<%= JSON.stringify(category) %>)">Edit</button>
+                        <button class="btn btn-delete" onclick="deleteCategory(<%= category.id %>)">Delete</button>
+                    </td>
+                </tr>
+            <% }); %>
+        <% } else { %>
+            <tr>
+                <td colspan="4">No categories found.</td>
+            </tr>
+        <% } %>
+    </tbody>
+</table>
+
+<script>
+    const formContainer = document.getElementById('categoryFormContainer');
+    const form = document.getElementById('categoryForm');
+    const formTitle = document.getElementById('formTitle');
+    
+    function showForm() {
+        formContainer.style.display = 'block';
+        form.reset();
+        document.getElementById('categoryId').value = '';
+        formTitle.textContent = 'Create New Category';
+    }
+
+    function hideForm() {
+        formContainer.style.display = 'none';
+        form.reset();
+    }
+
+    function editCategory(category) {
+        showForm();
+        formTitle.textContent = 'Edit Category: ' + category.name;
+        
+        document.getElementById('categoryId').value = category.id;
+        document.getElementById('name').value = category.name;
+        document.getElementById('type').value = category.type;
+
+        formContainer.scrollIntoView({ behavior: 'smooth',block: 'start'
+     });
+    }
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const id = document.getElementById('categoryId').value;
+        const name = document.getElementById('name').value;
+        const type = document.getElementById('type').value;
+
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? `/categories/${id}` : '/categories';
+        
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, type })
+            });
+
+            if (response.ok) {
+                alert('Category saved successfully! Reloading...');
+                window.location.reload(); 
+            } else {
+                const errorData = await response.json();
+                alert('Error saving category: ' + (errorData.message || 'Unknown error.'));
+            }
+        } catch (error) {
+            alert('A network error occurred.');
+        }
+    });
+
+    async function deleteCategory(id) {
+        if (!confirm('Are you sure you want to delete this category?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/categories/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                alert('Category deleted successfully! Reloading...');
+                window.location.reload();
+            } else {
+                const errorData = await response.json();
+                alert('Error deleting category: ' + (errorData.message || 'Unknown error.'));
+            }
+        } catch (error) {
+            alert('A network error occurred during deletion.');
+        }
+    }
+</script>

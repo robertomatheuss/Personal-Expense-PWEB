@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/global.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1>
+                    Personal Expense Tracker
+                </h1>
+                
+                <nav class="nav-links">
+                    <a href="/accounts/view" class="<%= pageType === 'account' ? 'active' : '' %>">
+                        Accounts
+                    </a>
+                    
+                    <a href="/categories/view" class="active">
+                        Categories
+                    </a>
+                    
+                    <a href="/transactions/view" class="<%= pageType === 'transaction' ? 'active' : '' %>">
+                        Transactions
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <% 
+            if (pageType === 'category') { 
+        %>
+            <%- include('../categories/index.ejs') %>
+        <% 
+            } else if (pageType === 'account') { 
+        %>
+            <%- include('../accounts/index.ejs') %> 
+        <% 
+            } else { 
+        %>
+            <h2>Welcome to Personal Expense Tracker!</h2>
+        <% 
+            } 
+        %>
+        
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 PWEB Project</p>
+        </div>
+    </footer>
+</body>
+</html>
