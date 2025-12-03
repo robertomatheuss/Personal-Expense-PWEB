@@ -1,7 +1,8 @@
-:root {
-    --primary-color: #4cafa7; /* Green */
-    --secondary-color: #2196F3; /* Blue */
-    --danger-color: #F44336; /* Red */
+/*
+:root { 
+    --primary-color: #4cafa7; 
+    --secondary-color: #2196F3;
+    --danger-color: #F44336; 
     --background-light: #f9f9f9;
     --text-dark: #333;
     --border-light: #ddd;
@@ -180,4 +181,4 @@ header h1 {
     border-color: var(--primary-color);
     outline: none;
     box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-}
+} 

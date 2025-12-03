@@ -2,7 +2,9 @@ const express = require('express');
 const path = require('path');
 const db = require('./infra/database');
 const seedDatabase = require('./seeders/seed');
+
 const CategoryRouter = require('./routes/categoryRoutes');
+const AccountRouter = require('./routes/accountRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,8 +18,10 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public'))); 
 
 app.use('/categories', CategoryRouter);
+app.use('/accounts', AccountRouter);
+
 app.get('/', (req, res) => {
-    res.render('index', { title: 'Personal Expense Tracker' }); 
+    res.render('index', { title: 'Gestão Financeira Pessoal', pageType: 'home' }); 
 });
 
 db.syncDatabase()

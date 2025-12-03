@@ -24,6 +24,8 @@ fs.readdirSync(modelsDir)
         db.models[model.name] = model;
     });
 
+console.log('Modelos carregados:', Object.keys(db.models));
+
 Object.keys(db.models).forEach(modelName => {
   if (db.models[modelName].associate) {
       db.models[modelName].associate(db.models);
