@@ -21,15 +21,6 @@ module.exports = (sequelize) => {
             type: DataTypes.ENUM('fixed', 'variable'),
             allowNull: false,
             defaultValue: 'variable'
-        },
-        // CORREÇÃO: Padronizado para categoryId (minúsculo) para bater com o Seed/Service
-        categoryId: {
-            type: DataTypes.INTEGER,
-            allowNull: true, // Pode ser null se não tiver categoria
-            references: {
-                model: 'Categories',
-                key: 'id'
-            }
         }
     }, {
         tableName: 'Accounts',
@@ -41,14 +32,6 @@ module.exports = (sequelize) => {
             foreignKey: 'accountId',
             as: 'accountTransactions'
         });
-
-        // CORREÇÃO: models.Category (nome do model), e não models.CategoryID
-        if (models.Category) {
-            Account.belongsTo(models.Category, {
-                foreignKey: 'categoryId',
-                as: 'category'
-            });
-        }
     };
 
     return Account;

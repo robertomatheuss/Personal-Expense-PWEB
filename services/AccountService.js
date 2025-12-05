@@ -4,8 +4,6 @@ class AccountService {
     constructor() {
         this.Account = db.models.Account;
         this.Transaction = db.models.Transaction;
-        this.Category = db.models.Category;
-
         this.validTypes = ['fixed', 'variable'];
     }
 
@@ -26,22 +24,13 @@ class AccountService {
         if (accountData.initialBalance === undefined || accountData.initialBalance === '') {
             accountData.initialBalance = 0.0;
         }
-
-        if (!accountData.categoryId || accountData.categoryId === '') {
-            accountData.categoryId = null;
-        }
         
         return this.Account.create(accountData);
     }
 
     async findAll() {
         return this.Account.findAll({
-            include: [{
-                model: this.Category,
-                as: 'category',
-                attributes: ['id', 'name']
-            }],
-            attributes: ['id', 'name', 'type', 'initialBalance', 'categoryId'],
+            attributes: ['id', 'name', 'type', 'initialBalance'],
             order: [['name', 'ASC']]
         });
     }
@@ -53,24 +42,13 @@ class AccountService {
 
         return this.Account.findAll({
             where: { type: type },
-            include: [{
-                model: this.Category,
-                as: 'category',
-                attributes: ['id', 'name']
-            }],
-            attributes: ['id', 'name', 'type', 'initialBalance', 'categoryId'],
+            attributes: ['id', 'name', 'type', 'initialBalance'],
             order: [['name', 'ASC']]
         })
     }
 
     async findById(id) {
-        return this.Account.findByPk(id, {
-            include: [{
-                model: this.Category,
-                as: 'category',
-                attributes: ['id', 'name']
-            }]
-        })
+        return this.Account.findByPk(id)
     }
 
     async update(id, updateData) {
@@ -89,14 +67,6 @@ class AccountService {
 
         if (updateData.type && !this.validTypes.includes(updateData.type)) {
             throw new Error("Tipo de conta inválido");
-        }
-
-        if (updateData.type && !this.validTypes.includes(updateData.type)) {
-            throw new Error("Tipo de conta inválido");
-        }
-
-        if (updateData.categoryId === '' || updateData.categoryId === null) {
-            throw new Error("categoryId não pode ser nulo ou vazio.");
         }
 
         return account.update(updateData);

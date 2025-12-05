@@ -22,41 +22,28 @@ const seedDatabase = async () => {
         const accountCount = await Account.count();
         if (accountCount === 0) {
             console.log('Criando Contas Iniciais...');
-            
-            // Buscamos as categorias que ACABAMOS de garantir que existem
-            // Usamos Promise.all para buscar todas de uma vez de forma eficiente
-            const [catBanco, catInvest, catLazer] = await Promise.all([
-                Category.findOne({ where: { name: 'Banco/Taxas' } }),
-                Category.findOne({ where: { name: 'Investimentos' } }),
-                Category.findOne({ where: { name: 'Lazer' } })
-            ]);
 
-            // Validação de segurança: Só cria se as categorias existirem
-            if (catBanco && catInvest && catLazer) {
-                await Account.bulkCreate([
-                    { 
-                        name: 'Conta Corrente (Nubank)', 
-                        initialBalance: 1500.50, 
-                        type: 'variable',
-                        categoryId: catBanco.id // Vínculo direto e obrigatório
-                    },
-                    { 
-                        name: 'Reserva de Emergência', 
-                        initialBalance: 10000.00, 
-                        type: 'fixed',
-                        categoryId: catInvest.id // Vínculo direto e obrigatório
-                    },
-                    { 
-                        name: 'Carteira (Dinheiro Vivo)', 
-                        initialBalance: 250.00, 
-                        type: 'variable',
-                        categoryId: catLazer.id // Vínculo direto e obrigatório
-                    },
-                ]);
-                console.log('Contas criadas com sucesso (todas vinculadas a categorias).');
-            } else {
-                console.error('ERRO: Não foi possível criar contas pois as categorias base não foram encontradas.');
-            }
+            await Account.bulkCreate([
+                { 
+                    name: 'Conta Corrente (Nubank)', 
+                    initialBalance: 1500.50, 
+                    type: 'variable',
+                    categoryId: catBanco.id // Vínculo direto e obrigatório
+                },
+                { 
+                    name: 'Reserva de Emergência', 
+                    initialBalance: 10000.00, 
+                    type: 'fixed',
+                    categoryId: catInvest.id // Vínculo direto e obrigatório
+                },
+                { 
+                    name: 'Carteira (Dinheiro Vivo)', 
+                    initialBalance: 250.00, 
+                    type: 'variable',
+                    categoryId: catLazer.id // Vínculo direto e obrigatório
+                },  
+            ]);
+            console.log('Contas criadas com sucesso.');
         } else {
             console.log('Contas já existem, pulando seed.');
         }

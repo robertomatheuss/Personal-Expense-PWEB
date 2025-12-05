@@ -13,13 +13,11 @@ class AccountController {
                 accounts = await AccountService.findAll();
             }
 
-            const categories = await CategoryService.findAll();
             const accountTypes = AccountService.validTypes;
 
             res.render('layout/main', {
                 title: 'Gestão de Contas',
                 accounts: accounts,
-                categories: categories,
                 accountTypes: accountTypes,
                 pageType: 'account',
                 currentFilter: filterType || ''
@@ -41,13 +39,13 @@ class AccountController {
 
     async createAccount(req, res) {
         try {
-            const { name, initialBalance, type, categoryId } = req.body;
+            const { name, initialBalance, type } = req.body;
 
             if (!name) {
                 return res.status(400).json({ error: true, message: "Erro de validação: O nome é obrigatório." });
             }
 
-            const newAccount = await AccountService.create({ name, initialBalance, type, categoryId });
+            const newAccount = await AccountService.create({ name, initialBalance, type });
 
             return res.status(201).json({ message: "Conta criada com sucesso.", data: newAccount });
         } catch (error) {
