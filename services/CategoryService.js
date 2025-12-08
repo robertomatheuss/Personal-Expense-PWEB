@@ -6,9 +6,7 @@ class CategoryService {
         this.Transaction = db.models.Transaction;
     }
 
-    // ... create, findAll, update (mantém igual) ...
     async create(data) {
-        // ... mantém código existente
         return this.Category.create(data);
     }
 
@@ -17,20 +15,16 @@ class CategoryService {
     }
 
     async update(id, data) {
-        // ... mantém código existente
         const category = await this.Category.findByPk(id);
         if (!category) throw new Error("Categoria não encontrada.");
         return category.update(data);
     }
 
-    // --- MUDANÇA AQUI ---
     async delete(id) {
-        // 1. Exclui todas as transações vinculadas a esta categoria (Limpeza)
         await this.Transaction.destroy({ 
             where: { categoryId: id } 
         });
 
-        // 2. Agora exclui a categoria
         return this.Category.destroy({ 
             where: { id: id } 
         });

@@ -15,7 +15,7 @@ const seedDatabase = async () => {
             ]);
 }
 
-        // 2. Contas (Usuários)
+        // 2. Contas 
         if (await Account.count() === 0) {
             await Account.bulkCreate([
                 { name: 'Casa', initialBalance: 0 },
@@ -23,9 +23,8 @@ const seedDatabase = async () => {
             ]);
         }
 
-        // 3. Transações (Exemplo)
+        // 3. Transações 
         if (await Transaction.count() === 0) {
-    // ... buscas ...
             if (casa && sal && food) {
                 await Transaction.bulkCreate([
                     {
@@ -35,7 +34,7 @@ const seedDatabase = async () => {
                         date: new Date(),
                         description: 'Salário Mensal',
                         transactionType: 'INCOME',
-                        recurrence: 'FIXED' // Salário é fixo
+                        recurrence: 'FIXED'
                     },
                     {
                         accountId: pessoal.id,
@@ -44,7 +43,7 @@ const seedDatabase = async () => {
                         date: new Date(),
                         description: 'iFood',
                         transactionType: 'EXPENSE',
-                        recurrence: 'VARIABLE' // iFood é variável
+                        recurrence: 'VARIABLE'
                     }
                 ]);
             }

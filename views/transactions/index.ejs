@@ -150,61 +150,55 @@
     const form = document.getElementById('transactionForm');
     const formTitle = document.getElementById('formTitle');
 
-    // Abre formulário para criação (Resetado)
+   
     function showForm() {
         formContainer.classList.remove('hidden');
         form.reset(); 
         document.getElementById('transactionId').value = ''; 
-        document.getElementById('date').valueAsDate = new Date(); // Data de hoje
+        document.getElementById('date').valueAsDate = new Date(); 
         formTitle.textContent = 'Nova Transação';
         
-        // Seleciona Despesa por padrão e filtra categorias
         document.getElementById('typeExpense').checked = true;
         filterCategories(); 
         
         formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    // Fecha formulário
+    
     function hideForm() { 
         formContainer.classList.add('hidden'); 
         form.reset(); 
     }
 
-    // --- FUNÇÃO DE EDIÇÃO ---
+    
     function editTransaction(t) {
-        showForm(); // Abre o container primeiro
+        showForm(); 
 
-        // 1. Atualiza Título e ID
+        
         formTitle.textContent = 'Editar Transação';
         document.getElementById('transactionId').value = t.id;
 
-        // 2. Preenche campos simples
+        
         document.getElementById('value').value = t.value;
         document.getElementById('description').value = t.description;
         document.getElementById('recurrence').value = t.recurrence;
-        document.getElementById('date').value = t.date; // A data já vem no formato YYYY-MM-DD do banco
+        document.getElementById('date').value = t.date; 
         
-        // 3. Marca o Radio Button correto (Receita ou Despesa)
+        
         if (t.transactionType === 'INCOME') {
             document.getElementById('typeIncome').checked = true;
         } else {
             document.getElementById('typeExpense').checked = true;
         }
 
-        // 4. IMPORTANTE: Chama o filtro de categorias AGORA.
-        // Se não chamarmos isso, o <option> da categoria correta pode estar com display:none
         filterCategories();
 
-        // 5. Agora que as opções estão visíveis, selecionamos a Conta e a Categoria
         document.getElementById('accountId').value = t.accountId;
         document.getElementById('categoryId').value = t.categoryId;
 
-        // Rola até o formulário
         formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    // Envio do Formulário (Criação ou Edição)
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -249,7 +243,6 @@
         }
     });
 
-    // Exclusão
     async function deleteTransaction(id) {
         if(confirm("Tem certeza que deseja excluir esta transação?")) {
             try {
@@ -260,16 +253,14 @@
         }
     }
 
-    // Filtro de Categorias (Entrada vs Saída)
     function filterCategories() {
         const selectedType = document.querySelector('input[name="transactionType"]:checked').value;
         const select = document.getElementById('categoryId');
         const options = select.querySelectorAll('option');
         
-        // Guardamos o valor atual para tentar restaurar caso ele ainda seja válido após o filtro
         const currentValue = select.value;
         
-        select.value = ""; // Reseta visualmente
+        select.value = "";
 
         options.forEach(opt => {
             if (opt.value === "") return;
@@ -284,8 +275,6 @@
             }
         });
         
-        // (Opcional) Se o valor que estava selecionado ainda for visível, seleciona ele de volta
-        // Isso ajuda na edição
         for (let opt of options) {
             if (opt.value === currentValue && !opt.disabled) {
                 select.value = currentValue;

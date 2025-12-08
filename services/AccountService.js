@@ -7,7 +7,6 @@ class AccountService {
     }
 
     async create(accountData) {
-        // Validação simples do nome
         if (accountData.name) {
             accountData.name = accountData.name.trim();
             if (accountData.name.length < 2) {
@@ -17,7 +16,6 @@ class AccountService {
             throw new Error("O nome é obrigatório.")
         }
 
-        // Define saldo 0 se não for informado
         if (accountData.initialBalance === undefined || accountData.initialBalance === '') {
             accountData.initialBalance = 0.0;
         }
@@ -59,14 +57,11 @@ class AccountService {
         });
     }
 
-    // --- MUDANÇA AQUI ---
     async delete(id) {
-        // 1. Primeiro, excluímos todas as transações vinculadas a este usuário/conta
         await this.Transaction.destroy({
             where: { accountId: id }
         });
 
-        // 2. Agora que não há mais dependências, podemos excluir a conta
         return this.Account.destroy({
             where: { id: id }
         });

@@ -24,7 +24,6 @@ module.exports = (sequelize) => {
             allowNull: false,
             defaultValue: 'EXPENSE'
         },
-        // ADICIONADO: Recorrência agora pertence à transação
         recurrence: {
             type: DataTypes.ENUM('FIXED', 'VARIABLE'),
             allowNull: false,

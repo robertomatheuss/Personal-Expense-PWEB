@@ -2,14 +2,12 @@ const AccountService = require("../services/AccountService");
 
 class AccountController {
     
-    // Renderiza a tela de gestão de usuários/contas
     async renderAccountView(req, res) {
         try {
-            // Não há mais filtros de tipo, trazemos todos
             const accounts = await AccountService.findAll();
 
             res.render('layout/main', {
-                title: 'Perfis / Contas',
+                title: 'Contas',
                 accounts: accounts,
                 pageType: 'account'
             });
@@ -30,7 +28,6 @@ class AccountController {
 
     async createAccount(req, res) {
         try {
-            // Recebe apenas name e initialBalance
             const { name, initialBalance } = req.body;
 
             const newAccount = await AccountService.create({ name, initialBalance });

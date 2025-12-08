@@ -11,13 +11,11 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        // Apenas define se é Entrada ou Saída (para filtrar o select na tela de transações)
         type: {
             type: DataTypes.ENUM('INCOME', 'EXPENSE'), 
             allowNull: false,
             defaultValue: 'EXPENSE'
         }
-        // REMOVIDO: recurrence
     }, {
         tableName: 'Categories',
         timestamps: true,

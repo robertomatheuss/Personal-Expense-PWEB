@@ -25,7 +25,6 @@ class TransactionService {
         
         if (!['INCOME', 'EXPENSE'].includes(data.transactionType)) throw new Error("Tipo de transação inválido.");
         
-        // ADICIONADO: Validação de Recorrência
         if (!['FIXED', 'VARIABLE'].includes(data.recurrence)) throw new Error("Recorrência inválida.");
 
         return this.Transaction.create(data);

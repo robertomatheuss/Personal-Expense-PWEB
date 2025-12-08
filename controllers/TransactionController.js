@@ -6,7 +6,6 @@ class TransactionController {
     
     async renderTransactionView(req, res) {
         try {
-            // Buscamos tudo para preencher a tabela e os selects do formulário
             const transactions = await TransactionService.findAll();
             const accounts = await AccountService.findAll();
             const categories = await CategoryService.findAll();

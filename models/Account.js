@@ -10,21 +10,20 @@ module.exports = (sequelize) => {
         name: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true, // Garante que não existam dois "Wylker"
+            unique: true, 
         },
         initialBalance: {
             type: DataTypes.FLOAT,
             allowNull: false,
             defaultValue: 0.0,
         }
-        // REMOVIDO: type, categoryId
+        
     }, {
         tableName: 'Accounts',
         timestamps: true,
     });
 
     Account.associate = (models) => {
-        // Uma Conta (Pessoa) tem várias transações
         Account.hasMany(models.Transaction, {
             foreignKey: 'accountId',
             as: 'transactions'

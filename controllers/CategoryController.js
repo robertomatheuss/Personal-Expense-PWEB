@@ -2,7 +2,6 @@ const CategoryService = require("../services/CategoryService");
 
 class CategoryController {
     
-    // Renderiza a TELA (View)
     async renderCategoryView(req, res) {
         try {
             const categories = await CategoryService.findAll();
@@ -17,7 +16,6 @@ class CategoryController {
         }
     }
 
-    // Retorna JSON (Necessário para evitar o erro do Router)
     async getAllCategories(req, res) {
         try {
             const categories = await CategoryService.findAll();
@@ -29,7 +27,6 @@ class CategoryController {
 
     async createCategory(req, res) {
         try {
-            // Repassa name, type e recurrence
             await CategoryService.create(req.body);
             return res.status(201).json({ message: "Categoria criada." });
         } catch (error) {
