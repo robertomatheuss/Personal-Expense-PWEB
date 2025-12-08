@@ -4,85 +4,72 @@ class AccountService {
     constructor() {
         this.Account = db.models.Account;
         this.Transaction = db.models.Transaction;
-        this.validTypes = ['fixed', 'variable'];
     }
 
     async create(accountData) {
+        // Validação simples do nome
         if (accountData.name) {
             accountData.name = accountData.name.trim();
-            if (accountData.name.length < 3) {
-                throw new Error("O nome da conta deve ter pelo menos 3 caracteres.")
+            if (accountData.name.length < 2) {
+                throw new Error("O nome deve ter pelo menos 2 caracteres.")
             }
         } else {
-            throw new Error("O nome da conta é obrigatório.")
+            throw new Error("O nome é obrigatório.")
         }
 
-        if (accountData.type && !this.validTypes.includes(accountData.type)) {
-            throw new Error("Tipo de conta inválido. Deve ser 'fixed' ou 'variable'.")
-        }
-
+        // Define saldo 0 se não for informado
         if (accountData.initialBalance === undefined || accountData.initialBalance === '') {
             accountData.initialBalance = 0.0;
         }
-        
-        return this.Account.create(accountData);
+
+        return this.Account.create({
+            name: accountData.name,
+            initialBalance: accountData.initialBalance
+        });
     }
 
     async findAll() {
         return this.Account.findAll({
-            attributes: ['id', 'name', 'type', 'initialBalance'],
+            attributes: ['id', 'name', 'initialBalance'],
             order: [['name', 'ASC']]
         });
     }
 
-    async findByType(type) {
-        if (!this.validTypes.includes(type)) {
-            throw new Error("Tipo de filtro inválido.")
-        }
-
-        return this.Account.findAll({
-            where: { type: type },
-            attributes: ['id', 'name', 'type', 'initialBalance'],
-            order: [['name', 'ASC']]
-        })
-    }
-
     async findById(id) {
-        return this.Account.findByPk(id)
+        return this.Account.findByPk(id);
     }
 
     async update(id, updateData) {
         const account = await this.Account.findByPk(id);
 
         if (!account) {
-            return null
+            return null;
         }
 
         if (updateData.name) {
             updateData.name = updateData.name.trim();
-            if (updateData.name.length < 3) {
-                throw new Error("O nome da conta deve ter pelo menos 3 caracteres.")
+            if (updateData.name.length < 2) {
+                throw new Error("O nome deve ter pelo menos 2 caracteres.")
             }
         }
 
-        if (updateData.type && !this.validTypes.includes(updateData.type)) {
-            throw new Error("Tipo de conta inválido");
-        }
-
-        return account.update(updateData);
+        return account.update({
+            name: updateData.name || account.name,
+            initialBalance: updateData.initialBalance !== undefined ? updateData.initialBalance : account.initialBalance
+        });
     }
 
+    // --- MUDANÇA AQUI ---
     async delete(id) {
-        const associatedTransactions = await this.Transaction.count({
+        // 1. Primeiro, excluímos todas as transações vinculadas a este usuário/conta
+        await this.Transaction.destroy({
             where: { accountId: id }
         });
-        if (associatedTransactions > 0) {
-            throw new Error(`Não é possível excluir esta conta. Existem ${associatedTransactions} transações associadas a ela.`);
-        }
 
+        // 2. Agora que não há mais dependências, podemos excluir a conta
         return this.Account.destroy({
             where: { id: id }
-        })
+        });
     }
 }
 

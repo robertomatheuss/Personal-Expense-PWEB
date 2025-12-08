@@ -1,44 +1,20 @@
-<!-- Cabeçalho da Seção e Botão de Ação -->
 <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
     <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-amber-500 pl-3">
-        Gestão de Contas
+        Gerenciar Contas
     </h2>
 
     <button id="createBtn" onclick="showForm()"
         class="flex items-center gap-2 bg-black hover:bg-neutral-800 text-white px-5 py-2.5 rounded-md transition-all shadow-md text-sm font-medium tracking-wide uppercase">
-        <i data-lucide="plus" class="w-4 h-4"></i>
+        <i data-lucide="user-plus" class="w-4 h-4"></i>
         Nova Conta
     </button>
 </div>
 
-<!-- Barra de Filtros -->
-<div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6 flex flex-col sm:flex-row items-center gap-3">
-    <div class="flex items-center gap-2 text-gray-600">
-        <i data-lucide="filter" class="w-4 h-4"></i>
-        <label for="typeFilter" class="text-sm font-semibold uppercase tracking-wide">Filtrar:</label>
-    </div>
-
-    <div class="relative w-full sm:w-64">
-        <!-- O filtro recarrega a página passando o parametro ?type=... -->
-        <select id="typeFilter" onchange="window.location.href='/accounts/view?type=' + this.value"
-            class="w-full appearance-none bg-white border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors">
-            <option value="">-- Todos os Tipos --</option>
-            <option value="variable" <%= currentFilter==='variable' ? 'selected' : '' %>>Variável</option>
-            <option value="fixed" <%= currentFilter==='fixed' ? 'selected' : '' %>>Fixa</option>
-        </select>
-        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-            <i data-lucide="chevron-down" class="w-4 h-4"></i>
-        </div>
-    </div>
-</div>
-
-<!-- Formulário (Oculto por padrão) -->
-<div id="accountFormContainer"
-    class="hidden mb-8 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden animate-fade-in-down">
+<div id="accountFormContainer" class="hidden mb-8 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden animate-fade-in-down">
     <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
         <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-            <i data-lucide="wallet" class="w-4 h-4 text-amber-500"></i>
-            <span id="formTitle">Criar Nova Conta</span>
+            <i data-lucide="user" class="w-4 h-4 text-amber-500"></i>
+            <span id="formTitle">Nova Conta</span>
         </h3>
         <button onclick="hideForm()" class="text-gray-400 hover:text-red-500 transition-colors">
             <i data-lucide="x" class="w-5 h-5"></i>
@@ -49,20 +25,15 @@
         <input type="hidden" id="accountId" name="id">
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <!-- Campo Nome -->
             <div class="col-span-1">
-                <label for="name" class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Nome da
-                    Conta</label>
+                <label for="name" class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Nome da Conta</label>
                 <input type="text" id="name" name="name" required
                     class="w-full border-gray-300 rounded-md shadow-sm focus:border-amber-500 focus:ring focus:ring-amber-200 focus:ring-opacity-50 py-2 px-3 text-gray-700 transition-colors"
-                    placeholder="Ex: Reserva, Carteira, Nubank...">
+                    placeholder="Ex: Casa, Caixinha...">
             </div>
 
-            <!-- Campo Saldo Inicial -->
             <div class="col-span-1">
-                <label for="initialBalance"
-                    class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Saldo Inicial
-                    (R$)</label>
+                <label for="initialBalance" class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Saldo Inicial (R$)</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <span class="text-gray-500 sm:text-sm">R$</span>
@@ -71,118 +42,71 @@
                         class="w-full pl-10 border-gray-300 rounded-md shadow-sm focus:border-amber-500 focus:ring focus:ring-amber-200 focus:ring-opacity-50 py-2 px-3 text-gray-700 transition-colors"
                         placeholder="0.00">
                 </div>
+                <p class="mt-1 text-xs text-gray-400">Quanto essa conta tem hoje?</p>
             </div>
-
-            <!-- Campo Tipo de Conta -->
-            <div class="col-span-1">
-                <label for="type" class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Tipo de
-                    Conta</label>
-                <div class="relative">
-                    <select id="type" name="type" required
-                        class="w-full appearance-none border-gray-300 rounded-md shadow-sm focus:border-amber-500 focus:ring focus:ring-amber-200 focus:ring-opacity-50 py-2 px-3 text-gray-700 bg-white transition-colors">
-                        <option value="variable">Variável</option>
-                        <option value="fixed">Fixa</option>
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                    </div>
-                </div>
-                <p class="mt-1 text-xs text-gray-400">Fixa (Investimentos) ou Variável (Dia a dia).</p>
-            </div>
-
         </div>
 
         <div class="flex justify-end gap-3">
-            <button type="button" onclick="hideForm()"
-                class="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium text-sm transition-colors">
-                Cancelar
-            </button>
-            <button type="submit" id="saveBtn"
-                class="px-4 py-2 bg-amber-500 border border-transparent rounded-md text-white hover:bg-amber-600 font-medium text-sm shadow-sm transition-colors flex items-center gap-2">
-                <i data-lucide="save" class="w-4 h-4"></i>
-                Salvar
+            <button type="button" onclick="hideForm()" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium text-sm transition-colors">Cancelar</button>
+            <button type="submit" id="saveBtn" class="px-4 py-2 bg-amber-500 border border-transparent rounded-md text-white hover:bg-amber-600 font-medium text-sm shadow-sm transition-colors flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i> Salvar
             </button>
         </div>
     </form>
 </div>
 
-<!-- Tabela de Dados -->
 <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nome</th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tipo</th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Saldo
-                        Inicial</th>
-                    <th scope="col"
-                        class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Ações</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Usuário</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Saldo Inicial</th>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Ações</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                <% if (accounts && accounts.length> 0) { %>
-                    <% accounts.forEach(account=> { %>
+                <% if (accounts && accounts.length > 0) { %>
+                    <% accounts.forEach(account => { %>
                         <tr id="account-row-<%= account.id %>" class="hover:bg-gray-50 transition-colors group">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
+                                    <i data-lucide="user" class="w-4 h-4"></i>
+                                </div>
                                 <%= account.name %>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                <!-- Badge de Tipo -->
-                                <% if (account.type==='fixed' ) { %>
-                                    <span
-                                        class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                        Fixa
-                                    </span>
-                                    <% } else { %>
-                                        <span
-                                            class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            Variável
-                                        </span>
-                                        <% } %>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-mono">
                                 R$ <%= parseFloat(account.initialBalance).toFixed(2) %>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex justify-end gap-3">
-                                    <button onclick="editAccount(<%= JSON.stringify(account) %>)"
-                                        class="text-indigo-600 hover:text-indigo-900 transition-colors p-1 rounded hover:bg-indigo-50"
-                                        title="Editar">
+                                    <button onclick="editAccount(<%= JSON.stringify(account) %>)" class="text-indigo-600 hover:text-indigo-900 transition-colors p-1 rounded hover:bg-indigo-50" title="Editar">
                                         <i data-lucide="pencil" class="w-4 h-4"></i>
                                     </button>
-                                    <button onclick="deleteAccount(<%= account.id %>)"
-                                        class="text-red-600 hover:text-red-900 transition-colors p-1 rounded hover:bg-red-50"
-                                        title="Excluir">
+                                    <button onclick="deleteAccount(<%= account.id %>)" class="text-red-600 hover:text-red-900 transition-colors p-1 rounded hover:bg-red-50" title="Excluir">
                                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                                     </button>
                                 </div>
                             </td>
                         </tr>
-                        <% }); %>
-                            <% } else { %>
-                                <tr>
-                                    <td colspan="5" class="px-6 py-10 text-center text-gray-500">
-                                        <div class="flex flex-col items-center justify-center gap-2">
-                                            <i data-lucide="inbox" class="w-8 h-8 text-gray-300"></i>
-                                            <span class="text-sm">Nenhuma conta encontrada.</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% } %>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="3" class="px-6 py-10 text-center text-gray-500">
+                            <div class="flex flex-col items-center justify-center gap-2">
+                                <i data-lucide="users" class="w-8 h-8 text-gray-300"></i>
+                                <span class="text-sm">Nenhum usuário cadastrado.</span>
+                            </div>
+                        </td>
+                    </tr>
+                <% } %>
             </tbody>
         </table>
     </div>
 </div>
 
 <script>
-    // Garante que os ícones carreguem
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 
     const formContainer = document.getElementById('accountFormContainer');
     const form = document.getElementById('accountForm');
@@ -192,8 +116,7 @@
         formContainer.classList.remove('hidden');
         form.reset();
         document.getElementById('accountId').value = '';
-        formTitle.textContent = 'Criar Nova Conta';
-        document.getElementById('type').value = 'variable';
+        formTitle.textContent = 'Novo Usuário';
         setTimeout(() => document.getElementById('name').focus(), 100);
     }
 
@@ -204,18 +127,15 @@
 
     function editAccount(account) {
         showForm();
-        formTitle.textContent = 'Editar Conta: ' + account.name;
+        formTitle.textContent = 'Editar: ' + account.name;
         document.getElementById('accountId').value = account.id;
         document.getElementById('name').value = account.name;
-        document.getElementById('type').value = account.type;
         document.getElementById('initialBalance').value = account.initialBalance;
-
         formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
-
         const saveBtn = document.getElementById('saveBtn');
         const originalBtnContent = saveBtn.innerHTML;
         saveBtn.disabled = true;
@@ -224,7 +144,6 @@
 
         const id = document.getElementById('accountId').value;
         const name = document.getElementById('name').value;
-        const type = document.getElementById('type').value;
         const initialBalance = document.getElementById('initialBalance').value;
 
         const method = id ? 'PUT' : 'POST';
@@ -234,42 +153,35 @@
             const response = await fetch(url, {
                 method: method,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, type, initialBalance })
+                body: JSON.stringify({ name, initialBalance })
             });
 
             if (response.ok) {
                 window.location.reload();
             } else {
                 const errorData = await response.json();
-                alert('Erro ao salvar conta: ' + (errorData.message || 'Erro desconhecido.'));
+                alert('Erro: ' + (errorData.message || 'Erro desconhecido.'));
                 saveBtn.disabled = false;
                 saveBtn.innerHTML = originalBtnContent;
             }
         } catch (error) {
-            alert('Ocorreu um erro de rede.');
+            alert('Erro de conexão.');
             saveBtn.disabled = false;
             saveBtn.innerHTML = originalBtnContent;
         }
     });
 
     async function deleteAccount(id) {
-        if (!confirm('Tem certeza que deseja excluir esta conta?')) {
-            return;
-        }
-
+        if (!confirm('Excluir esta conta? As transações vinculadas também serão removidas.')) return;
         try {
-            const response = await fetch(`/accounts/${id}`, {
-                method: 'DELETE'
-            });
-
-            if (response.ok) {
-                window.location.reload();
-            } else {
-                const errorData = await response.json();
-                alert('Erro ao excluir conta: ' + (errorData.message || 'Erro desconhecido.'));
+            const response = await fetch(`/accounts/${id}`, { method: 'DELETE' });
+            if (response.ok) window.location.reload();
+            else {
+                const data = await response.json();
+                alert('Erro: ' + data.message);
             }
         } catch (error) {
-            alert('Ocorreu um erro de rede durante a exclusão.');
+            alert('Erro de conexão.');
         }
     }
 </script>

@@ -9,24 +9,22 @@ module.exports = (sequelize) => {
         },
         name: {
             type: DataTypes.STRING,
-            allowNull: false, 
-            unique: true,    
-        },
-        type: {
-            type: DataTypes.ENUM('fixed', 'variable'), 
             allowNull: false,
-            defaultValue: 'variable',
+        },
+        // Apenas define se é Entrada ou Saída (para filtrar o select na tela de transações)
+        type: {
+            type: DataTypes.ENUM('INCOME', 'EXPENSE'), 
+            allowNull: false,
+            defaultValue: 'EXPENSE'
         }
+        // REMOVIDO: recurrence
     }, {
-        tableName: 'Categories', 
-        timestamps: true,        
+        tableName: 'Categories',
+        timestamps: true,
     });
 
     Category.associate = (models) => {
-        Category.hasMany(models.Transaction, {
-            foreignKey: 'categoryId', 
-            as: 'categoryTransactions' 
-        });
+        Category.hasMany(models.Transaction, { foreignKey: 'categoryId', as: 'transactions' });
     };
 
     return Category;

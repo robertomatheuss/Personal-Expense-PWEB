@@ -1,0 +1,296 @@
+<div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+    <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-amber-500 pl-3">
+        Transações
+    </h2>
+    <button onclick="showForm()" class="flex items-center gap-2 bg-black hover:bg-neutral-800 text-white px-5 py-2.5 rounded-md transition-all shadow-md text-sm font-medium uppercase">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        Nova Transação
+    </button>
+</div>
+
+<div id="transactionFormContainer" class="hidden mb-8 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden animate-fade-in-down">
+    <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+        <h3 class="text-lg font-bold text-gray-800" id="formTitle">Nova Transação</h3>
+        <button type="button" onclick="hideForm()" class="text-gray-400 hover:text-red-500"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+
+    <form id="transactionForm" class="p-6">
+        <input type="hidden" id="transactionId">
+        
+        <div class="mb-4">
+            <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Tipo de Movimentação</label>
+            <div class="flex gap-4">
+                <label class="flex items-center gap-2 cursor-pointer p-2 border border-gray-200 rounded hover:bg-gray-50 w-full">
+                    <input type="radio" name="transactionType" id="typeExpense" value="EXPENSE" checked class="text-red-600 focus:ring-red-500" onchange="filterCategories()">
+                    <span class="text-sm font-medium text-red-600">Despesa (Saída)</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer p-2 border border-gray-200 rounded hover:bg-gray-50 w-full">
+                    <input type="radio" name="transactionType" id="typeIncome" value="INCOME" class="text-green-600 focus:ring-green-500" onchange="filterCategories()">
+                    <span class="text-sm font-medium text-green-600">Receita (Entrada)</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+            <div>
+                <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Recorrência</label>
+                <select id="recurrence" name="recurrence" required class="w-full border border-gray-300 rounded-md py-2 px-3 bg-white focus:ring-amber-500">
+                    <option value="VARIABLE">Variável (Oscila)</option>
+                    <option value="FIXED">Fixa (Recorrente)</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="date" class="block text-xs font-bold text-gray-600 uppercase mb-2">Data</label>
+                <input type="date" id="date" name="date" required class="w-full border border-gray-300 rounded-md py-2 px-3 focus:ring-amber-500">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div>
+                <label for="accountId" class="block text-xs font-bold text-gray-600 uppercase mb-2">Usuário (Conta)</label>
+                <select id="accountId" name="accountId" required class="w-full border border-gray-300 rounded-md py-2 px-3 bg-white">
+                    <option value="">Selecione...</option>
+                    <% accounts.forEach(acc => { %>
+                        <option value="<%= acc.id %>"><%= acc.name %></option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div>
+                <label for="categoryId" class="block text-xs font-bold text-gray-600 uppercase mb-2">Categoria</label>
+                <select id="categoryId" name="categoryId" required class="w-full border border-gray-300 rounded-md py-2 px-3 bg-white">
+                    <option value="">Selecione...</option>
+                    <% categories.forEach(cat => { %>
+                        <option value="<%= cat.id %>" data-type="<%= cat.type %>"><%= cat.name %></option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div>
+                <label for="value" class="block text-xs font-bold text-gray-600 uppercase mb-2">Valor (R$)</label>
+                <input type="number" step="0.01" id="value" name="value" required placeholder="0.00" class="w-full border border-gray-300 rounded-md py-2 px-3">
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <label for="description" class="block text-xs font-bold text-gray-600 uppercase mb-2">Descrição (Opcional)</label>
+            <input type="text" id="description" name="description" class="w-full border border-gray-300 rounded-md py-2 px-3">
+        </div>
+
+        <div class="flex justify-end gap-3">
+            <button type="button" onclick="hideForm()" class="px-4 py-2 border rounded-md text-gray-600 hover:bg-gray-50">Cancelar</button>
+            <button type="submit" id="saveBtn" class="px-4 py-2 bg-amber-500 text-white rounded-md hover:bg-amber-600 flex items-center gap-2">
+                <i data-lucide="save" class="w-4 h-4"></i> Salvar
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Data</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Detalhes</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Recorrência</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase">Valor</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase">Ações</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            <% if(transactions && transactions.length > 0) { %>
+                <% transactions.forEach(t => { %>
+                <tr class="hover:bg-gray-50 group">
+                    <td class="px-6 py-4 text-sm text-gray-600"><%= t.date.split('-').reverse().join('/') %></td>
+                    
+                    <td class="px-6 py-4">
+                        <p class="text-sm font-medium text-gray-800"><%= t.description || 'Sem descrição' %></p>
+                        <p class="text-xs text-gray-500">
+                            <%= t.account ? t.account.name : '?' %> • <%= t.category ? t.category.name : '?' %>
+                        </p>
+                    </td>
+
+                    <td class="px-6 py-4">
+                        <span class="text-[10px] uppercase px-2 py-1 rounded-full font-bold border <%= t.recurrence === 'FIXED' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-orange-50 text-orange-700 border-orange-200' %>">
+                            <%= t.recurrence === 'FIXED' ? 'Fixa' : 'Variável' %>
+                        </span>
+                    </td>
+
+                    <td class="px-6 py-4 text-right whitespace-nowrap">
+                        <span class="font-bold font-mono <%= t.transactionType === 'INCOME' ? 'text-green-600' : 'text-red-600' %>">
+                            <%= t.transactionType === 'INCOME' ? '+' : '-' %> R$ <%= parseFloat(t.value).toFixed(2) %>
+                        </span>
+                    </td>
+                    
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end gap-3">
+                            <button onclick="editTransaction(<%= JSON.stringify(t) %>)" class="text-indigo-600 hover:text-indigo-900 p-1 rounded hover:bg-indigo-50" title="Editar">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                            </button>
+                            
+                            <button onclick="deleteTransaction(<%= t.id %>)" class="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50" title="Excluir">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <% }); %>
+            <% } else { %>
+                <tr><td colspan="5" class="p-8 text-center text-gray-500">Nenhuma transação registrada.</td></tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    
+    const formContainer = document.getElementById('transactionFormContainer');
+    const form = document.getElementById('transactionForm');
+    const formTitle = document.getElementById('formTitle');
+
+    // Abre formulário para criação (Resetado)
+    function showForm() {
+        formContainer.classList.remove('hidden');
+        form.reset(); 
+        document.getElementById('transactionId').value = ''; 
+        document.getElementById('date').valueAsDate = new Date(); // Data de hoje
+        formTitle.textContent = 'Nova Transação';
+        
+        // Seleciona Despesa por padrão e filtra categorias
+        document.getElementById('typeExpense').checked = true;
+        filterCategories(); 
+        
+        formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Fecha formulário
+    function hideForm() { 
+        formContainer.classList.add('hidden'); 
+        form.reset(); 
+    }
+
+    // --- FUNÇÃO DE EDIÇÃO ---
+    function editTransaction(t) {
+        showForm(); // Abre o container primeiro
+
+        // 1. Atualiza Título e ID
+        formTitle.textContent = 'Editar Transação';
+        document.getElementById('transactionId').value = t.id;
+
+        // 2. Preenche campos simples
+        document.getElementById('value').value = t.value;
+        document.getElementById('description').value = t.description;
+        document.getElementById('recurrence').value = t.recurrence;
+        document.getElementById('date').value = t.date; // A data já vem no formato YYYY-MM-DD do banco
+        
+        // 3. Marca o Radio Button correto (Receita ou Despesa)
+        if (t.transactionType === 'INCOME') {
+            document.getElementById('typeIncome').checked = true;
+        } else {
+            document.getElementById('typeExpense').checked = true;
+        }
+
+        // 4. IMPORTANTE: Chama o filtro de categorias AGORA.
+        // Se não chamarmos isso, o <option> da categoria correta pode estar com display:none
+        filterCategories();
+
+        // 5. Agora que as opções estão visíveis, selecionamos a Conta e a Categoria
+        document.getElementById('accountId').value = t.accountId;
+        document.getElementById('categoryId').value = t.categoryId;
+
+        // Rola até o formulário
+        formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Envio do Formulário (Criação ou Edição)
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const saveBtn = document.getElementById('saveBtn');
+        const originalText = saveBtn.innerHTML;
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = 'Salvando...';
+
+        const id = document.getElementById('transactionId').value;
+        const url = id ? `/transactions/${id}` : '/transactions';
+        const method = id ? 'PUT' : 'POST';
+        
+        const data = {
+            transactionType: document.querySelector('input[name="transactionType"]:checked').value,
+            date: document.getElementById('date').value,
+            accountId: document.getElementById('accountId').value,
+            categoryId: document.getElementById('categoryId').value,
+            value: document.getElementById('value').value,
+            description: document.getElementById('description').value,
+            recurrence: document.getElementById('recurrence').value
+        };
+
+        try {
+            const res = await fetch(url, { 
+                method: method, 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify(data) 
+            });
+
+            if(res.ok) {
+                window.location.reload();
+            } else {
+                const err = await res.json();
+                alert("Erro: " + (err.message || "Erro desconhecido"));
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = originalText;
+            }
+        } catch(err) { 
+            alert("Erro de rede."); 
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalText;
+        }
+    });
+
+    // Exclusão
+    async function deleteTransaction(id) {
+        if(confirm("Tem certeza que deseja excluir esta transação?")) {
+            try {
+                const res = await fetch(`/transactions/${id}`, { method: 'DELETE' });
+                if(res.ok) window.location.reload();
+                else alert("Erro ao excluir.");
+            } catch (e) { alert("Erro de rede."); }
+        }
+    }
+
+    // Filtro de Categorias (Entrada vs Saída)
+    function filterCategories() {
+        const selectedType = document.querySelector('input[name="transactionType"]:checked').value;
+        const select = document.getElementById('categoryId');
+        const options = select.querySelectorAll('option');
+        
+        // Guardamos o valor atual para tentar restaurar caso ele ainda seja válido após o filtro
+        const currentValue = select.value;
+        
+        select.value = ""; // Reseta visualmente
+
+        options.forEach(opt => {
+            if (opt.value === "") return;
+            const categoryType = opt.getAttribute('data-type');
+            
+            if (categoryType === selectedType) {
+                opt.style.display = 'block'; 
+                opt.disabled = false;
+            } else {
+                opt.style.display = 'none';
+                opt.disabled = true;
+            }
+        });
+        
+        // (Opcional) Se o valor que estava selecionado ainda for visível, seleciona ele de volta
+        // Isso ajuda na edição
+        for (let opt of options) {
+            if (opt.value === currentValue && !opt.disabled) {
+                select.value = currentValue;
+                break;
+            }
+        }
+    }
+</script>

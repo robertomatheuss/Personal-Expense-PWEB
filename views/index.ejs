@@ -1,18 +1,157 @@
-<!DOCTYPE html>
-<html lang="en">
+<div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+    <div>
+        <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-amber-500 pl-3">
+            Visão Geral
+        </h2>
+        <p class="text-sm text-gray-500 mt-1 ml-4">Resumo financeiro de todos os usuários.</p>
+    </div>
+    
+    <div class="flex gap-2">
+        <a href="/accounts/view" class="flex items-center gap-2 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 px-4 py-2 rounded-md transition-all shadow-sm text-sm font-medium">
+            <i data-lucide="users" class="w-4 h-4"></i>
+            Gerenciar Usuários
+        </a>
+        <a href="/transactions/view" class="flex items-center gap-2 bg-black hover:bg-neutral-800 text-white px-4 py-2 rounded-md transition-all shadow-md text-sm font-medium">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            Nova Transação
+        </a>
+    </div>
+</div>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= title %>
-    </title>
-</head>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    
+    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm flex items-center justify-between relative overflow-hidden group">
+        <div class="z-10">
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Saldo Atual (Todos)</p>
+            <h3 class="text-3xl font-bold text-gray-800">
+                R$ <%= typeof totalBalance !== 'undefined' ? totalBalance.toFixed(2) : '0.00' %>
+            </h3>
+            <p class="text-xs text-gray-400 mt-2 flex items-center gap-1">
+                <i data-lucide="wallet" class="w-3 h-3 text-amber-500"></i>
+                Total acumulado
+            </p>
+        </div>
+        <div class="p-4 bg-amber-50 rounded-full text-amber-500 group-hover:scale-110 transition-transform">
+            <i data-lucide="landmark" class="w-8 h-8"></i>
+        </div>
+    </div>
 
-<body>
-    <h1 class="">Welcome to the <%= title %>!</h1>
-    <p>The basic setup (Express, EJS, and SQLite connection) is working.</p>
+    <div class="bg-white border-l-4 border-green-500 rounded-r-lg p-6 shadow-sm flex items-center justify-between">
+        <div>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">Entradas Totais</p>
+            <h3 class="text-2xl font-bold text-green-600">
+                + R$ <%= typeof totalIncome !== 'undefined' ? totalIncome.toFixed(2) : '0.00' %>
+            </h3>
+        </div>
+        <div class="p-3 bg-green-50 rounded-full text-green-600">
+            <i data-lucide="trending-up" class="w-6 h-6"></i>
+        </div>
+    </div>
 
-</body>
+    <div class="bg-white border-l-4 border-red-500 rounded-r-lg p-6 shadow-sm flex items-center justify-between">
+        <div>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">Saídas Totais</p>
+            <h3 class="text-2xl font-bold text-red-600">
+                - R$ <%= typeof totalExpense !== 'undefined' ? totalExpense.toFixed(2) : '0.00' %>
+            </h3>
+        </div>
+        <div class="p-3 bg-red-50 rounded-full text-red-600">
+            <i data-lucide="trending-down" class="w-6 h-6"></i>
+        </div>
+    </div>
+</div>
 
-</html>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <div class="lg:col-span-2 space-y-6">
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wide flex items-center gap-2">
+                    <i data-lucide="list" class="w-4 h-4 text-gray-400"></i>
+                    Últimas Movimentações
+                </h3>
+                <a href="/transactions/view" class="text-xs text-amber-600 hover:text-amber-700 font-medium hover:underline">Ver todas</a>
+            </div>
+            
+            <div class="divide-y divide-gray-100">
+                <% if (recentTransactions && recentTransactions.length > 0) { %>
+                    <% recentTransactions.forEach(t => { %>
+                        <div class="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center <%= t.transactionType === 'INCOME' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' %>">
+                                    <i data-lucide="<%= t.transactionType === 'INCOME' ? 'arrow-up' : 'arrow-down' %>" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-gray-800"><%= t.description || 'Sem descrição' %></h4>
+                                    <div class="flex gap-2 text-xs text-gray-500 mt-0.5">
+                                        <span class="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 font-medium">
+                                            <%= t.account ? t.account.name : '?' %>
+                                        </span>
+                                        <span class="flex items-center">
+                                            • <%= t.category ? t.category.name : 'Geral' %>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-bold font-mono <%= t.transactionType === 'INCOME' ? 'text-green-600' : 'text-red-600' %>">
+                                    <%= t.transactionType === 'INCOME' ? '+' : '-' %> R$ <%= Number(t.value).toFixed(2) %>
+                                </p>
+                                <p class="text-[10px] text-gray-400">
+                                    <%= t.date.split('-').reverse().join('/') %>
+                                </p>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="p-8 text-center">
+                        <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i data-lucide="inbox" class="w-6 h-6 text-gray-400"></i>
+                        </div>
+                        <p class="text-gray-500 text-sm">Nenhuma movimentação recente.</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <div class="lg:col-span-1 space-y-6">
+        
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-5">
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Estatísticas</h3>
+            <ul class="space-y-3">
+                <li class="flex justify-between items-center text-sm">
+                    <span class="text-gray-600 flex items-center gap-2"><i data-lucide="users" class="w-4 h-4 text-blue-500"></i> Contas Ativas</span>
+                    <span class="font-bold text-gray-800"><%= accountsCount || 0 %></span>
+                </li>
+                </ul>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+            <a href="/accounts/view" class="flex flex-col items-center justify-center p-4 bg-white border border-gray-200 hover:border-amber-400 hover:shadow-md rounded-lg transition-all group cursor-pointer">
+                <i data-lucide="users" class="w-6 h-6 text-gray-400 group-hover:text-amber-500 mb-2 transition-colors"></i>
+                <span class="text-xs font-bold text-gray-600">Contas</span>
+            </a>
+            
+            <a href="/categories/view" class="flex flex-col items-center justify-center p-4 bg-white border border-gray-200 hover:border-purple-400 hover:shadow-md rounded-lg transition-all group cursor-pointer">
+                <i data-lucide="tag" class="w-6 h-6 text-gray-400 group-hover:text-purple-500 mb-2 transition-colors"></i>
+                <span class="text-xs font-bold text-gray-600">Categorias</span>
+            </a>
+        </div>
+
+        <div class="bg-gradient-to-br from-neutral-800 to-black rounded-lg p-6 text-white shadow-lg relative overflow-hidden">
+            <div class="relative z-10">
+                <h4 class="font-bold text-amber-400 text-sm mb-1">Dica Rápida</h4>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                    Registre suas despesas diariamente. Pequenos gastos somados fazem uma grande diferença no saldo final.
+                </p>
+            </div>
+            <i data-lucide="piggy-bank" class="absolute -bottom-2 -right-2 w-20 h-20 text-white opacity-10 rotate-12"></i>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+</script>

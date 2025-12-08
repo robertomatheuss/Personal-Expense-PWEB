@@ -4,82 +4,53 @@ const seedDatabase = async () => {
     try {
         const { Category, Account, Transaction } = db.models;
 
-        const categoryCount = await Category.count();
-        if (categoryCount === 0) {
-            console.log('Seeding Categories...');
+        // 1. Categorias
+        if (await Category.count() === 0) {
             await Category.bulkCreate([
-                { name: 'Alimentação', type: 'Variável' },
-                { name: 'Aluguel', type: 'Fixa' },
-                { name: 'Salário', type: 'Fixa' },
-                { name: 'Transporte', type: 'Variável' },
-                { name: 'Lazer', type: 'Variável' },
+                { name: 'Salário', type: 'INCOME' },
+                { name: 'Freelance', type: 'INCOME' },
+                { name: 'Aluguel', type: 'EXPENSE' },
+                { name: 'Alimentação', type: 'EXPENSE' },
+                { name: 'Lazer', type: 'EXPENSE' },
             ]);
-            console.log('Categories seeded successfully.');
-        } else {
-            console.log('Categories already exist, skipping seed.');
-        }
+}
 
-        const accountCount = await Account.count();
-        if (accountCount === 0) {
-            console.log('Criando Contas Iniciais...');
-
+        // 2. Contas (Usuários)
+        if (await Account.count() === 0) {
             await Account.bulkCreate([
-                { 
-                    name: 'Conta Corrente (Nubank)', 
-                    initialBalance: 1500.50, 
-                    type: 'variable',
-                    categoryId: catBanco.id // Vínculo direto e obrigatório
-                },
-                { 
-                    name: 'Reserva de Emergência', 
-                    initialBalance: 10000.00, 
-                    type: 'fixed',
-                    categoryId: catInvest.id // Vínculo direto e obrigatório
-                },
-                { 
-                    name: 'Carteira (Dinheiro Vivo)', 
-                    initialBalance: 250.00, 
-                    type: 'variable',
-                    categoryId: catLazer.id // Vínculo direto e obrigatório
-                },  
+                { name: 'Casa', initialBalance: 0 },
+                { name: 'Pessoal', initialBalance: 0 }
             ]);
-            console.log('Contas criadas com sucesso.');
-        } else {
-            console.log('Contas já existem, pulando seed.');
         }
-        
-        if (await Transaction.count() === 0) {
-            console.log('Seeding Transactions...');
-            const checking = await Account.findOne({ where: { name: 'Checking Account' } });
-            const salary = await Category.findOne({ where: { name: 'Salary' } });
-            const food = await Category.findOne({ where: { name: 'Alimentation' } });
 
-            if (checking && salary && food) {
+        // 3. Transações (Exemplo)
+        if (await Transaction.count() === 0) {
+    // ... buscas ...
+            if (casa && sal && food) {
                 await Transaction.bulkCreate([
-                    { 
-                        accountId: checking.id, 
-                        categoryId: salary.id, 
-                        value: 2000.00, 
-                        date: new Date().toISOString().split('T')[0], 
-                        description: 'Monthly salary', 
-                        transactionType: 'INCOME' 
+                    {
+                        accountId: casa.id,
+                        categoryId: sal.id,
+                        value: 3000.00,
+                        date: new Date(),
+                        description: 'Salário Mensal',
+                        transactionType: 'INCOME',
+                        recurrence: 'FIXED' // Salário é fixo
                     },
-                    { 
-                        accountId: checking.id, 
-                        categoryId: food.id, 
-                        value: 50.75, 
-                        date: new Date().toISOString().split('T')[0], 
-                        description: 'Supermarket purchase', 
-                        transactionType: 'EXPENSE' 
+                    {
+                        accountId: pessoal.id,
+                        categoryId: food.id,
+                        value: 50.00,
+                        date: new Date(),
+                        description: 'iFood',
+                        transactionType: 'EXPENSE',
+                        recurrence: 'VARIABLE' // iFood é variável
                     }
                 ]);
-                console.log('Transactions seeded successfully.');
             }
         }
-
-
     } catch (error) {
-        console.error('Error during database seeding:', error);
+        console.error('Erro no Seed:', error);
     }
 };
 

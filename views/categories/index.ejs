@@ -1,260 +1,127 @@
-<!-- Cabeçalho da Seção e Botão de Ação Principal -->
 <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-    <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-amber-500 pl-3">
-        Gestão de Categorias
-    </h2>
-
-    <button id="createBtn" onclick="showForm()"
-        class="flex items-center gap-2 bg-black hover:bg-neutral-800 text-white px-5 py-2.5 rounded-md transition-all shadow-md text-sm font-medium tracking-wide uppercase">
-        <i data-lucide="plus" class="w-4 h-4"></i>
-        Nova Categoria
+    <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-amber-500 pl-3">Categorias</h2>
+    <button onclick="showForm()" class="bg-black text-white px-5 py-2.5 rounded-md text-sm font-medium uppercase hover:bg-neutral-800 flex gap-2 items-center">
+        <i data-lucide="plus" class="w-4 h-4"></i> Nova Categoria
     </button>
 </div>
 
-<!-- Barra de Filtros -->
-<div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6 flex flex-col sm:flex-row items-center gap-3">
-    <div class="flex items-center gap-2 text-gray-600">
-        <i data-lucide="filter" class="w-4 h-4"></i>
-        <label for="typeFilter" class="text-sm font-semibold uppercase tracking-wide">Filtrar:</label>
-    </div>
-
-    <div class="relative w-full sm:w-64">
-        <select id="typeFilter" onchange="window.location.href='/categories/view?type=' + this.value"
-            class="w-full appearance-none bg-white border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors">
-            <option value="">-- Todos os Tipos --</option>
-            <% types.forEach(type=> { %>
-                <option value="<%= type %>" <%=currentFilter===type ? 'selected' : '' %>>
-                    <%= type.charAt(0).toUpperCase() + type.slice(1) %>
-                </option>
-                <% }); %>
-        </select>
-        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-            <i data-lucide="chevron-down" class="w-4 h-4"></i>
-        </div>
-    </div>
-</div>
-
-<!-- Formulário (Oculto por padrão) -->
-<div id="categoryFormContainer"
-    class="hidden mb-8 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden animate-fade-in-down">
-    <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-        <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-            <i data-lucide="edit-3" class="w-4 h-4 text-amber-500"></i>
-            <span id="formTitle">Criar Nova Categoria</span>
-        </h3>
-        <button onclick="hideForm()" class="text-gray-400 hover:text-red-500 transition-colors">
-            <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-    </div>
-
+<div id="categoryFormContainer" class="hidden mb-8 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
     <form id="categoryForm" class="p-6">
-        <input type="hidden" id="categoryId" name="id">
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <!-- Campo Nome -->
-            <div class="col-span-1">
-                <label for="name"
-                    class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Nome</label>
-                <input type="text" id="name" name="name" required
-                    class="w-full border-gray-300 rounded-md shadow-sm focus:border-amber-500 focus:ring focus:ring-amber-200 focus:ring-opacity-50 py-2 px-3 text-gray-700 transition-colors"
-                    placeholder="Ex: Alimentação, Salário...">
+        <input type="hidden" id="categoryId">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Nome</label>
+                <input type="text" id="name" name="name" required class="w-full border border-gray-300 rounded-md py-2 px-3 focus:ring-amber-500 focus:border-amber-500">
             </div>
-
-            <!-- Campo Tipo -->
-            <div class="col-span-1">
-                <label for="type"
-                    class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Tipo</label>
-                <div class="relative">
-                    <select id="type" name="type" required
-                        class="w-full appearance-none border-gray-300 rounded-md shadow-sm focus:border-amber-500 focus:ring focus:ring-amber-200 focus:ring-opacity-50 py-2 px-3 text-gray-700 bg-white transition-colors">
-                        <% types.forEach(type=> { %>
-                            <option value="<%= type %>">
-                                <%= type.charAt(0).toUpperCase() + type.slice(1) %>
-                            </option>
-                            <% }); %>
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                    </div>
-                </div>
+            
+            <div>
+                <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Tipo de Movimento</label>
+                <select id="type" name="type" required class="w-full border border-gray-300 rounded-md py-2 px-3 bg-white focus:ring-amber-500 focus:border-amber-500">
+                    <option value="EXPENSE">Despesa (Saída)</option>
+                    <option value="INCOME">Receita (Entrada)</option>
+                </select>
             </div>
-        </div>
-
-        <div class="flex justify-end gap-3">
-            <button type="button" onclick="hideForm()"
-                class="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium text-sm transition-colors">
-                Cancelar
-            </button>
-            <button type="submit" id="saveBtn"
-                class="px-4 py-2 bg-amber-500 border border-transparent rounded-md text-white hover:bg-amber-600 font-medium text-sm shadow-sm transition-colors flex items-center gap-2">
-                <i data-lucide="save" class="w-4 h-4"></i>
-                Salvar
-            </button>
+            </div>
+        
+        <div class="flex justify-end gap-3 mt-6">
+            <button type="button" onclick="hideForm()" class="px-4 py-2 border rounded-md text-gray-600 hover:bg-gray-50">Cancelar</button>
+            <button type="submit" class="px-4 py-2 bg-amber-500 text-white rounded-md hover:bg-amber-600 font-medium">Salvar</button>
         </div>
     </form>
 </div>
 
-<!-- Tabela de Dados -->
-<div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-    <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ID</th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nome</th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tipo</th>
-                    <th scope="col"
-                        class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Ações</th>
+<div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Nome</th>
+                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Movimento</th>
+                <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase">Ações</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            <% if(categories.length > 0) { %>
+                <% categories.forEach(cat => { %>
+                <tr class="hover:bg-gray-50 group">
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900"><%= cat.name %></td>
+                    
+                    <td class="px-6 py-4">
+                        <span class="text-[10px] uppercase px-2 py-1 rounded-full font-bold tracking-wide border <%= cat.type === 'INCOME' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200' %>">
+                            <%= cat.type === 'INCOME' ? 'Receita' : 'Despesa' %>
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <button onclick="editCategory(<%= JSON.stringify(cat) %>)" class="text-indigo-600 hover:text-indigo-900 mr-3 p-1"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                        <button onclick="deleteCategory(<%= cat.id %>)" class="text-red-600 hover:text-red-900 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </td>
                 </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                <% if (categories && categories.length> 0) { %>
-                    <% categories.forEach(category=> { %>
-                        <tr id="category-row-<%= category.id %>" class="hover:bg-gray-50 transition-colors group">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                                #<%= category.id %>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                <%= category.name %>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                <span
-                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    <%= category.type === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
-                                    <%= category.type==='income' ? 'Entrada' : 'Saída' %>
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <div class="flex justify-end gap-3">
-                                    <button onclick="editCategory(<%= JSON.stringify(category) %>)"
-                                        class="text-indigo-600 hover:text-indigo-900 transition-colors p-1 rounded hover:bg-indigo-50"
-                                        title="Editar">
-                                        <i data-lucide="pencil" class="w-4 h-4"></i>
-                                    </button>
-                                    <button onclick="deleteCategory(<%= category.id %>)"
-                                        class="text-red-600 hover:text-red-900 transition-colors p-1 rounded hover:bg-red-50"
-                                        title="Excluir">
-                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <% }); %>
-                            <% } else { %>
-                                <tr>
-                                    <td colspan="4" class="px-6 py-10 text-center text-gray-500">
-                                        <div class="flex flex-col items-center justify-center gap-2">
-                                            <i data-lucide="inbox" class="w-8 h-8 text-gray-300"></i>
-                                            <span class="text-sm">Nenhuma categoria encontrada.</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% } %>
-            </tbody>
-        </table>
-    </div>
+                <% }); %>
+            <% } else { %>
+                <tr><td colspan="3" class="p-6 text-center text-gray-500">Nenhuma categoria cadastrada.</td></tr>
+            <% } %>
+        </tbody>
+    </table>
 </div>
 
 <script>
-    // Inicializar ícones se eles não forem carregados automaticamente pelo layout principal
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-
+    if (typeof lucide !== 'undefined') lucide.createIcons();
     const formContainer = document.getElementById('categoryFormContainer');
     const form = document.getElementById('categoryForm');
-    const formTitle = document.getElementById('formTitle');
 
-    function showForm() {
-        // Tailwind usa 'hidden' em vez de style.display
-        formContainer.classList.remove('hidden');
-        form.reset();
-        document.getElementById('categoryId').value = '';
-        formTitle.textContent = 'Criar Nova Categoria';
-
-        // Focar no primeiro campo
-        setTimeout(() => document.getElementById('name').focus(), 100);
+    function showForm() { 
+        formContainer.classList.remove('hidden'); 
+        form.reset(); 
+        document.getElementById('categoryId').value = ''; 
     }
-
-    function hideForm() {
-        formContainer.classList.add('hidden');
-        form.reset();
-    }
-
-    function editCategory(category) {
+    function hideForm() { formContainer.classList.add('hidden'); }
+    
+    function editCategory(cat) {
         showForm();
-        formTitle.textContent = 'Editar Categoria: ' + category.name;
-
-        document.getElementById('categoryId').value = category.id;
-        document.getElementById('name').value = category.name;
-        document.getElementById('type').value = category.type;
-
-        formContainer.scrollIntoView({
-            behavior: 'smooth', block: 'center'
-        });
+        document.getElementById('formTitle').innerText = 'Editar Categoria';
+        document.getElementById('categoryId').value = cat.id;
+        document.getElementById('name').value = cat.name;
+        document.getElementById('type').value = cat.type;
+        // REMOVIDO: recurrence
     }
 
-    form.addEventListener('submit', async function (e) {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
-
-        // Feedback visual de carregamento
-        const saveBtn = document.getElementById('saveBtn');
-        const originalBtnContent = saveBtn.innerHTML;
-        saveBtn.disabled = true;
-        saveBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Salvando...';
-        lucide.createIcons();
-
         const id = document.getElementById('categoryId').value;
-        const name = document.getElementById('name').value;
-        const type = document.getElementById('type').value;
-
-        const method = id ? 'PUT' : 'POST';
         const url = id ? `/categories/${id}` : '/categories';
+        const method = id ? 'PUT' : 'POST';
+        
+        const body = JSON.stringify({
+            name: document.getElementById('name').value,
+            type: document.getElementById('type').value
+            // REMOVIDO: recurrence
+        });
 
         try {
-            const response = await fetch(url, {
-                method: method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, type })
-            });
-
-            if (response.ok) {
-                // Não precisa alert, reload já dá o feedback
-                window.location.reload();
-            } else {
-                const errorData = await response.json();
-                alert('Erro ao salvar categoria: ' + (errorData.message || 'Erro desconhecido.'));
-                saveBtn.disabled = false;
-                saveBtn.innerHTML = originalBtnContent;
+            const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body });
+            if(res.ok) window.location.reload();
+            else {
+                const err = await res.json();
+                alert("Erro: " + err.message);
             }
-        } catch (error) {
-            alert('Ocorreu um erro de rede.');
-            saveBtn.disabled = false;
-            saveBtn.innerHTML = originalBtnContent;
-        }
+        } catch(e) { alert("Erro de rede"); }
     });
 
     async function deleteCategory(id) {
-        if (!confirm('Tem certeza que deseja excluir esta categoria?')) {
-            return;
-        }
-
-        try {
-            const response = await fetch(`/categories/${id}`, {
-                method: 'DELETE'
-            });
-
-            if (response.ok) {
-                window.location.reload();
-            } else {
-                const errorData = await response.json();
-                alert('Erro ao excluir categoria: ' + (errorData.message || 'Erro desconhecido.'));
+        // Aviso mais forte para o usuário não apagar por engano
+        if(confirm("ATENÇÃO: Ao excluir esta categoria, todas as TRANSAÇÕES associadas a ela também serão excluídas.\n\nDeseja continuar?")) {
+            
+            try {
+                const res = await fetch(`/categories/${id}`, { method: 'DELETE' });
+                
+                if(res.ok) {
+                    window.location.reload();
+                } else {
+                    const err = await res.json();
+                    alert("Erro ao excluir: " + (err.message || "Erro desconhecido"));
+                }
+            } catch (error) {
+                alert("Erro de conexão com o servidor.");
             }
-        } catch (error) {
-            alert('Ocorreu um erro de rede durante a exclusão.');
         }
     }
 </script>

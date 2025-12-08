@@ -55,14 +55,14 @@
         </div>
 
         <!-- 3. Navegação (Links solicitados) -->
-        <nav class="border-t border-neutral-800 border-b border-neutral-900 w-full">
+        <nav class="border-t border-neutral-800 border-b w-full">
             <div class="container mx-auto">
                 <ul class="flex justify-center items-center gap-6 md:gap-10 py-5">
                     
                     <!-- Link: Contas -->
                     <li>
                         <a href="/accounts/view" 
-                           class="text-[15px] font-medium tracking-wide uppercase transition-colors duration-300 <%= pageType === 'account' ? 'text-amber-500' : 'text-white hover:text-gray-300' %>">
+                           class="text-[15px] font-medium tracking-wide uppercase transition-colors duration-300 <%= pageType === 'account' ? 'text-amber-500' : 'text-white hover:text-amber-500' %>">
                             Contas
                         </a>
                     </li>
@@ -70,7 +70,7 @@
                     <!-- Link: Categorias -->
                     <li>
                         <a href="/categories/view" 
-                           class="text-[15px] font-medium tracking-wide uppercase transition-colors duration-300 <%= pageType === 'category' ? 'text-amber-500' : 'text-white hover:text-gray-300' %>">
+                           class="text-[15px] font-medium tracking-wide uppercase transition-colors duration-300 <%= pageType === 'category' ? 'text-amber-500' : 'text-white hover:text-amber-500' %>">
                             Categorias
                         </a>
                     </li>
@@ -78,7 +78,7 @@
                     <!-- Link: Transações -->
                     <li>
                         <a href="/transactions/view" 
-                           class="text-[15px] font-medium tracking-wide uppercase transition-colors duration-300 <%= pageType === 'transaction' ? 'text-amber-500' : 'text-white hover:text-gray-300' %>">
+                           class="text-[15px] font-medium tracking-wide uppercase transition-colors duration-300 <%= pageType === 'transactions' ? 'text-amber-500' : 'text-white hover:text-amber-500' %>">
                             Transações
                         </a>
                     </li>
@@ -98,10 +98,17 @@
             <div class="bg-white rounded-lg shadow p-6">
                 <%- include('../accounts/index.ejs') %> 
             </div>
+        <% } else if (pageType === 'transaction') { %>
+            <div class="bg-white rounded-lg shadow p-6">
+                <%- include('../transactions/index.ejs') %>
+            </div>
+        <% } else if (pageType === 'home') { %>
+            <div class="w-full"> <%- include('../index.ejs') %> 
+            </div>
         <% } else { %>
             <div class="text-center py-20">
-                <h2 class="text-3xl font-bold text-gray-800 mb-2">Bem-vindo ao Controle de Finanças Pessoais!</h2>
-                <p class="text-gray-600">Selecione uma opção no menu acima para começar.</p>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Bem-vindo!</h2>
+                <p class="text-gray-600">Página não encontrada ou não definida.</p>
             </div>
         <% } %>
     </main>

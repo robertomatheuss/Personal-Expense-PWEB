@@ -7,37 +7,37 @@ module.exports = (sequelize) => {
             autoIncrement: true,
             primaryKey: true,
         },
-        value: { 
+        value: {
             type: DataTypes.FLOAT,
             allowNull: false,
         },
-        date: { 
-            type: DataTypes.DATEONLY, 
+        date: {
+            type: DataTypes.DATEONLY,
             allowNull: false,
         },
-        description: { 
+        description: {
             type: DataTypes.STRING,
-            allowNull: true, 
+            allowNull: true,
         },
         transactionType: {
-            type: DataTypes.ENUM('INCOME', 'EXPENSE'), 
+            type: DataTypes.ENUM('INCOME', 'EXPENSE'),
             allowNull: false,
+            defaultValue: 'EXPENSE'
         },
+        // ADICIONADO: Recorrência agora pertence à transação
+        recurrence: {
+            type: DataTypes.ENUM('FIXED', 'VARIABLE'),
+            allowNull: false,
+            defaultValue: 'VARIABLE'
+        }
     }, {
         tableName: 'Transactions',
         timestamps: true,
     });
 
     Transaction.associate = (models) => {
-        Transaction.belongsTo(models.Account, {
-            foreignKey: 'accountId', 
-            as: 'account'
-        });
-
-        Transaction.belongsTo(models.Category, {
-            foreignKey: 'categoryId', 
-            as: 'category'
-        });
+        Transaction.belongsTo(models.Account, { foreignKey: 'accountId', as: 'account' });
+        Transaction.belongsTo(models.Category, { foreignKey: 'categoryId', as: 'category' });
     };
 
     return Transaction;

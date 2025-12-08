@@ -3,8 +3,10 @@ const path = require('path');
 const db = require('./infra/database');
 const seedDatabase = require('./seeders/seed');
 
-const CategoryRouter = require('./routes/categoryRoutes');
+const HomeController = require('./controllers/HomeController');
 const AccountRouter = require('./routes/accountRoutes');
+const CategoryRouter = require('./routes/categoryRoutes');
+const TransactionRouter = require('./routes/transactionRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,10 +21,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/categories', CategoryRouter);
 app.use('/accounts', AccountRouter);
+app.use('/transactions', TransactionRouter);
 
-app.get('/', (req, res) => {
-    res.render('index', { title: 'Gestão Financeira Pessoal', pageType: 'home' }); 
-});
+app.get('/', HomeController.renderHome)
 
 db.syncDatabase()
     .then(() => {
