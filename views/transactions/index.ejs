@@ -69,7 +69,7 @@
 
             <div>
                 <label for="value" class="block text-xs font-bold text-gray-600 uppercase mb-2">Valor (R$)</label>
-                <input type="number" step="0.01" id="value" name="value" required placeholder="0.00" class="w-full border border-gray-300 rounded-md py-2 px-3">
+                <input type="number" step="1.00" id="value" name="value" required placeholder="0.00" class="w-full border border-gray-300 rounded-md py-2 px-3">
             </div>
         </div>
 
@@ -125,7 +125,7 @@
                     
                     <td class="px-6 py-4 text-right">
                         <div class="flex justify-end gap-3">
-                            <button onclick="editTransaction(<%= JSON.stringify(t) %>)" class="text-indigo-600 hover:text-indigo-900 p-1 rounded hover:bg-indigo-50" title="Editar">
+                            <button onclick='editTransaction(<%= JSON.stringify(t) %>)' class="text-indigo-600 hover:text-indigo-900 p-1 rounded hover:bg-indigo-50" title="Editar">
                                 <i data-lucide="pencil" class="w-4 h-4"></i>
                             </button>
                             
@@ -156,10 +156,11 @@
         form.reset(); 
         document.getElementById('transactionId').value = ''; 
         document.getElementById('date').valueAsDate = new Date(); 
-        formTitle.textContent = 'Nova Transação';
+        console.log("teste)")
         
         document.getElementById('typeExpense').checked = true;
         filterCategories(); 
+        formTitle.textContent = 'Nova Transação';
         
         formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
@@ -173,11 +174,8 @@
     
     function editTransaction(t) {
         showForm(); 
-
-        
         formTitle.textContent = 'Editar Transação';
         document.getElementById('transactionId').value = t.id;
-
         
         document.getElementById('value').value = t.value;
         document.getElementById('description').value = t.description;

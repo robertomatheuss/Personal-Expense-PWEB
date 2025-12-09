@@ -18,9 +18,15 @@ class TransactionService {
     }
 
     async create(data) {
+        const transactionDate = new Date(data.date);
+        const today = new Date();
+
+        if (transactionDate.getTime() > today.getTime()) {
+            throw new Error("A data da transação não pode ser uma data futura.");
+        }
         if (!data.accountId) throw new Error("Selecione uma Conta/Usuário.");
         if (!data.categoryId) throw new Error("Selecione uma Categoria.");
-        if (!data.value || data.value <= 0) throw new Error("O valor deve ser positivo.");
+        if (!data.value || data.value <= 0) throw new Error("O valor deve ser maior que 0.");
         if (!data.date) throw new Error("A data é obrigatória.");
         
         if (!['INCOME', 'EXPENSE'].includes(data.transactionType)) throw new Error("Tipo de transação inválido.");
@@ -31,6 +37,16 @@ class TransactionService {
     }
 
     async update(id, data) {
+        const transactionDate = new Date(data.date);
+        const today = new Date();
+        if (transactionDate.getTime() > today.getTime()) {
+            throw new Error("A data da transação não pode ser uma data futura.");
+        }
+        if (!data.accountId) throw new Error("Selecione uma Conta/Usuário.");
+        if (!data.categoryId) throw new Error("Selecione uma Categoria.");
+        if (!data.value || data.value <= 0) throw new Error("O valor deve ser maior que 0.");
+        if (!data.date) throw new Error("A data é obrigatória.");
+        
         const transaction = await this.Transaction.findByPk(id);
         if (!transaction) return null;
         return transaction.update(data);
