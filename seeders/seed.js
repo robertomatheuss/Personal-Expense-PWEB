@@ -13,7 +13,7 @@ const seedDatabase = async () => {
                 { name: 'Alimentação', type: 'EXPENSE' },
                 { name: 'Lazer', type: 'EXPENSE' },
             ]);
-}
+        }
 
         // 2. Contas 
         if (await Account.count() === 0) {
@@ -23,9 +23,15 @@ const seedDatabase = async () => {
             ]);
         }
 
+        const sal = await Category.findOne({ where: { name: 'Salário' } });
+        const food = await Category.findOne({ where: { name: 'Alimentação' } });
+
+        const casa = await Account.findOne({ where: { name: 'Casa' } });
+        const pessoal = await Account.findOne({ where: { name: 'Pessoal' } });
+
         // 3. Transações 
         if (await Transaction.count() === 0) {
-            if (casa && sal && food) {
+            if (casa && sal && food && pessoal) {
                 await Transaction.bulkCreate([
                     {
                         accountId: casa.id,
