@@ -10,12 +10,15 @@ class AccountService {
         if (accountData.name) {
             accountData.name = accountData.name.trim();
             if (accountData.name.length < 2) {
-                throw new Error("O nome deve ter pelo menos 2 caracteres.")
+                throw new Error("O nome deve ter pelo menos duas letras.")
             }
         } else {
             throw new Error("O nome é obrigatório.")
         }
 
+        if (accountData.initialBalance <= 0) {
+                throw new Error("O saldo inicial deve ser um valor maior que 0.")
+            }
         if (accountData.initialBalance === undefined || accountData.initialBalance === '') {
             accountData.initialBalance = 0.0;
         }
@@ -43,7 +46,9 @@ class AccountService {
         if (!account) {
             return null;
         }
-
+        if (updateData.initialBalance <= 0) {
+                throw new Error("O saldo inicial deve ser um valor maior que 0.")
+            }
         if (updateData.name) {
             updateData.name = updateData.name.trim();
             if (updateData.name.length < 2) {

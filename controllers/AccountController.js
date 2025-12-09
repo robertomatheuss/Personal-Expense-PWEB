@@ -29,7 +29,7 @@ class AccountController {
     async createAccount(req, res) {
         try {
             const { name, initialBalance } = req.body;
-
+            
             const newAccount = await AccountService.create({ name, initialBalance });
 
             return res.status(201).json({ message: "Usuário/Conta criado com sucesso.", data: newAccount });
